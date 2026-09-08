@@ -47,7 +47,7 @@ void idc_op(uint8_t op1, uint8_t op2) { // Increment/decrement
         carry_f = (registers[op2] < 1); // Set carry flag if underflow occurs
     }
 }
-void sjm_op(uint8_t op1, uint8_t op2) {
+void sjm_op(uint8_t op1, uint8_t op2) { // Simple jump
     if (op1 == 0) {
         jump_f = 1;
         jump_address = (registers[2] << 8) | registers[3];
@@ -139,13 +139,13 @@ void (*operations[16])(uint8_t op1, uint8_t op2) = {
     or_op,   // 4
     xor_op,  // 5
     shr_op,  // 6
-    idc_op,  // 7
-    sjm_op,  // 8
+    idc_op,  // 7 sub
+    sjm_op,  // 8 sub
     je_op,   // 9
     jg_op,   // 10
     jl_op,   // 11
-    mst_op,  // 12
-    io_op,   // 13
-    msc_op,  // 14
-    imm_op   // 15
+    mst_op,  // 12 sub
+    io_op,   // 13 sub
+    msc_op,  // 14 sub
+    imm_op   // 15 sub
 };
