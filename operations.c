@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include "main.h"
 
+static uint16_t address_word(void) {
+    /* c and d hold signed data bytes, but addresses use their unsigned values. */
+    return ((uint16_t)(uint8_t)registers[2] << 8) | (uint8_t)registers[3];
+}
+
 void mov_op(uint8_t op1, uint8_t op2) {
     registers[op1] = registers[op2];
 }
@@ -50,21 +55,21 @@ void idc_op(uint8_t op1, uint8_t op2) { // Increment/decrement
 void sjm_op(uint8_t op1, uint8_t op2) { // Simple jump
     if (op1 == 0) {
         jump_f = 1;
-        jump_address = (registers[2] << 8) | registers[3];
+        jump_address = address_word();
     } else if (op1 == 1) { // Jump if zero
         if (registers[op2] == 0) {
             jump_f = 1;
-            jump_address = (registers[2] << 8) | registers[3];
+            jump_address = address_word();
         }
     } else if (op1 == 2) { // Jump if not zero
         if (registers[op2] != 0) {
             jump_f = 1;
-            jump_address = (registers[2] << 8) | registers[3];
+            jump_address = address_word();
         }
     } else if (op1 == 3) { // Jump if carry
         if (carry_f) {
             jump_f = 1;
-            jump_address = (registers[2] << 8) | registers[3];
+            jump_address = address_word();
         }
     }
     
@@ -72,27 +77,27 @@ void sjm_op(uint8_t op1, uint8_t op2) { // Simple jump
 void je_op(uint8_t op1, uint8_t op2) {
     if (registers[op1] == registers[op2]) {
         jump_f = 1;
-        jump_address = (registers[2] << 8) | registers[3];
+        jump_address = address_word();
     }
 }
 void jg_op(uint8_t op1, uint8_t op2) {
     if (registers[op1] > registers[op2]) {
         jump_f = 1;
-        jump_address = (registers[2] << 8) | registers[3];
+        jump_address = address_word();
     }
 }
 void jl_op(uint8_t op1, uint8_t op2) {
     if (registers[op1] < registers[op2]) {
         jump_f = 1;
-        jump_address = (registers[2] << 8) | registers[3];
+        jump_address = address_word();
     }
 }
 void mst_op(uint8_t op1, uint8_t op2) { // 2 different memory operations + 2 stack operations
     if (op1 == 0) { // Read from memory
-        registers[op2] = memory[((uint8_t) (registers[2]) << 8) | (uint8_t) (registers[3])];
+        registers[op2] = memory[address_word()];
         // printf("m[%d] = %0d\n", ((uint8_t) (registers[2]) << 8) | (uint8_t) (registers[3]), memory[((uint8_t) (registers[2]) << 8) | (uint8_t) (registers[3])]);
     } else if (op1 == 1) { // Write to memory
-        memory[(registers[2] << 8) | registers[3]] = registers[op2];
+        memory[address_word()] = registers[op2];
     } else if (op1 == 2) { // Pop from stack
         registers[op2] = stack[--sc];
     } else if (op1 == 3) { // Push to stack
