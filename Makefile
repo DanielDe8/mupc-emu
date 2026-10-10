@@ -13,7 +13,7 @@ $(OUT): $(OBJS)
 	$(CC) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(OUT) $(TEST_OUT)
+	rm -f $(OBJS) $(OUT)
 
 run: $(OUT)
 	./$(OUT) $(EMU_ARGS)
