@@ -108,7 +108,7 @@ void io_op(uint8_t op1, uint8_t op2) { // I/O operations
     uint8_t channel = memory[++pc];
     
     if (op1 == 0) {
-        scanf("%s", &registers[op2]);
+        registers[op2] = getchar();
     } else if (op1 == 1) {
         printf("%c", registers[op2]);
     }
