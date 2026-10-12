@@ -3,7 +3,26 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
 #include "main.h"
+
+int getchar_noenter(void) {
+    struct termios old, new;
+
+    tcgetattr(STDIN_FILENO, &old);
+    new = old;
+    new.c_lflag &= ~(ICANON | ECHO);
+    new.c_cc[VMIN] = 1;
+    new.c_cc[VTIME] = 0;
+    tcsetattr(STDIN_FILENO, TCSANOW, &new);
+
+    int c = getchar();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &old);
+
+    return c;
+}
 
 static uint16_t address_word(void) {
     /* c and d hold signed data bytes, but addresses use their unsigned values. */
@@ -106,9 +125,9 @@ void mst_op(uint8_t op1, uint8_t op2) { // 2 different memory operations + 2 sta
 }
 void io_op(uint8_t op1, uint8_t op2) { // I/O operations
     uint8_t channel = memory[++pc];
-    
+
     if (op1 == 0) {
-        registers[op2] = getchar();
+        registers[op2] = getchar_noenter();
     } else if (op1 == 1) {
         printf("%c", registers[op2]);
     }
