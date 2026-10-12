@@ -1,10 +1,13 @@
+.PHONY: all clean run install
+
 OBJS = main.o operations.o
 HEADER = main.h operations.h
 CC = gcc
 OUT = mupc-emu
 EMU_ARGS = ../mupc-asm/out.mupc
+INSTALL_DIR = /usr/local/bin
 
-all: $(OUT)
+all: clean $(OUT)
 
 $(OUT): $(OBJS)
 	$(CC) -o $@ $^
@@ -15,5 +18,9 @@ $(OUT): $(OBJS)
 clean:
 	rm -f $(OBJS) $(OUT)
 
-run: $(OUT)
+run: all
 	./$(OUT) $(EMU_ARGS)
+
+install: all
+	sudo rm $(INSTALL_DIR)/$(OUT)
+	sudo cp $(OUT) $(INSTALL_DIR)/
