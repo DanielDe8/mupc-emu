@@ -22,5 +22,5 @@ run: all
 	./$(OUT) $(EMU_ARGS)
 
 install: all
-	sudo rm $(INSTALL_DIR)/$(OUT)
+	sudo rm $(INSTALL_DIR)/$(OUT) || true
 	sudo cp $(OUT) $(INSTALL_DIR)/
