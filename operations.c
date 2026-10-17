@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+#include <limits.h>
 #include "main.h"
 
 int getchar_noenter(void) {
@@ -118,8 +119,16 @@ void mst_op(uint8_t op1, uint8_t op2) { // 2 different memory operations + 2 sta
     } else if (op1 == 1) { // Write to memory
         memory[address_word()] = registers[op2];
     } else if (op1 == 2) { // Pop from stack
+        if (sc == 0) {
+            fprintf(stderr, "STACK UNDERFLOW");
+            exit(EXIT_FAILURE);
+        }
         registers[op2] = stack[--sc];
     } else if (op1 == 3) { // Push to stack
+        if (sc == UINT16_MAX) {
+            fprintf(stderr, "STACK UNDERFLOW");
+            exit(EXIT_FAILURE);
+        }
         stack[sc++] = registers[op2];
     }
 }
